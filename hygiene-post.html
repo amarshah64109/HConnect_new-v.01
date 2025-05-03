@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HConnect | Share Hygiene Post</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+    }
+
+    .navbar {
+      background-color: #ffffff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e0e0e0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar-left img {
+      height: 40px;
+    }
+
+    .navbar-left span {
+      font-size: 22px;
+      font-weight: 600;
+      color: #4a148c;
+    }
+
+    .navbar-center {
+      display: flex;
+      gap: 24px;
+    }
+
+    .navbar-center a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    .navbar-center a:hover {
+      color: #4a148c;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-dropdown img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #4a148c;
+      text-align: center;
+    }
+
+    textarea, input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button {
+      background-color: #4a148c;
+      color: #fff;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      display: block;
+      margin: 0 auto;
+    }
+
+    button:hover {
+      background-color: #380a6b;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 10px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="hlogo.png" alt="HConnect Logo" />
+      <span>HConnect</span>
+    </div>
+    <div class="navbar-center">
+      <a href="dashboard.html">Home</a>
+      <a href="complaints.html">Complaints</a>
+      <a href="lostfound.html">Lost & Found</a>
+      <a href="hygiene.html">Hygiene</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="navbar-right">
+      <span id="username">User</span>
+      <div class="profile-dropdown">
+        <img src="default-avatar.png" id="profileImage" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Post Form -->
+  <div class="container">
+    <h2>Share a Hygiene Activity</h2>
+    <textarea id="description" rows="4" placeholder="Write what you did..."></textarea>
+    <input type="file" id="image" />
+    <button onclick="submitHygienePost()">Share Post</button>
+    <div class="status" id="statusMessage"></div>
+  </div>
+
+  <!-- Firebase & Cloudinary -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAgdzfUF7cfktDdjf-8T8UgmK5p_4Ol9I",
+      authDomain: "hconnect-41c7c.firebaseapp.com",
+      databaseURL: "https://hconnect-41c7c-default-rtdb.firebaseio.com",
+      projectId: "hconnect-41c7c",
+      storageBucket: "hconnect-41c7c.appspot.com",
+      messagingSenderId: "927970333668",
+      appId: "1:927970333668:web:541f523bea1a7f9549adf1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const cloudName = 'dw9x8q0ld';
+    const uploadPreset = 'hconnect_upload';
+
+    let currentUser = {};
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        currentUser = {
+          name: user.displayName || "Anonymous",
+          photo: user.photoURL || "default-avatar.png"
+        };
+        document.getElementById("username").textContent = currentUser.name;
+        document.getElementById("profileImage").src = currentUser.photo;
+      }
+    });
+
+    function submitHygienePost() {
+      const desc = document.getElementById('description').value.trim();
+      const file = document.getElementById('image').files[0];
+      const status = document.getElementById('statusMessage');
+
+      if (!desc || !file) {
+        alert("Please enter a description and select an image.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", uploadPreset);
+
+      fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        const post = {
+          userName: currentUser.name,
+          userPhoto: currentUser.photo,
+          description: desc,
+          imageUrl: data.secure_url,
+          date: new Date().toISOString()
+        };
+
+        db.ref("hygienePosts").push(post).then(() => {
+          status.textContent = "Post shared successfully!";
+          document.getElementById('description').value = "";
+          document.getElementById('image').value = "";
+        });
+      })
+      .catch(() => {
+        alert("Image upload failed.");
+      });
+    }
+  </script>
+</body>
+</html>

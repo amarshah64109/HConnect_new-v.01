@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HConnect | Complaints</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f5f5f5;
+    }
+
+    /* Top Navbar (Consistent with Lost & Found and Dashboard) */
+    .navbar {
+      background-color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-left .hamburger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #4a148c;
+      margin-right: 15px;
+    }
+
+    .navbar-left img {
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    .navbar-left span {
+      font-size: 22px;
+      font-weight: 600;
+      color: #4a148c;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .navbar-right span {
+      font-size: 15px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-dropdown img {
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 48px;
+      background-color: white;
+      min-width: 140px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      border-radius: 6px;
+      z-index: 1002;
+      overflow: hidden;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 10px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f0f0f0;
+    }
+
+    /* Left Sidebar (Consistent with Lost & Found and Dashboard) */
+    .sidebar {
+      width: 220px;
+      background-color: #fff;
+      height: calc(100vh - 70px);
+      position: fixed;
+      top: 70px;
+      left: 0;
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+      z-index: 999;
+    }
+
+    .sidebar h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #4a148c;
+      margin-bottom: 20px;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .sidebar a:hover {
+      background-color: #f0f0f0;
+    }
+
+    .sidebar a.active {
+      background-color: #4a148c;
+      color: #fff;
+    }
+
+    .sidebar a .material-icons {
+      margin-right: 10px;
+      font-size: 20px;
+    }
+
+    /* Content Area */
+    .content-wrapper {
+      margin-left: 220px;
+      padding-top: 20px;
+    }
+
+    .main-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .section {
+      background-color: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .section h2 {
+      margin-bottom: 15px;
+      color: #4a148c;
+      font-size: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section h2 .material-icons {
+      font-size: 24px;
+    }
+
+    /* Toggle Group for Post Type */
+    .toggle-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .toggle-group label {
+      padding: 10px 20px;
+      border-radius: 6px;
+      background-color: #f0f2f5;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-group input[type="radio"] {
+      display: none;
+    }
+
+    .toggle-group input[type="radio"]:checked + label {
+      background-color: #4a148c;
+      color: white;
+    }
+
+    .toggle-group label:hover {
+      background-color: #e0e0e0;
+    }
+
+    .toggle-group input[type="radio"]:checked + label:hover {
+      background-color: #380a6b;
+    }
+
+    /* Complaint Creator Form */
+    .complaint-creator, .hygiene-creator {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .complaint-creator label, .hygiene-creator label {
+      display: block;
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .complaint-creator input,
+    .complaint-creator textarea,
+    .complaint-creator select,
+    .hygiene-creator input,
+    .hygiene-creator textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .complaint-creator input:focus,
+    .complaint-creator textarea:focus,
+    .complaint-creator select:focus,
+    .hygiene-creator input:focus,
+    .hygiene-creator textarea:focus {
+      border-color: #4a148c;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(74, 20, 140, 0.1);
+    }
+
+    .complaint-creator input.error,
+    .complaint-creator textarea.error,
+    .complaint-creator select.error,
+    .hygiene-creator input.error,
+    .hygiene-creator textarea.error {
+      border-color: #e74c3c;
+    }
+
+    .complaint-creator textarea, .hygiene-creator textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .radio-group label {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background-color: #f0f2f5;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+
+    .radio-group input[type="radio"] {
+      display: none;
+    }
+
+    .radio-group input[type="radio"]:checked + label {
+      background-color: #4a148c;
+      color: white;
+    }
+
+    .radio-group label:hover {
+      background-color: #e0e0e0;
+    }
+
+    .radio-group input[type="radio"]:checked + label:hover {
+      background-color: #380a6b;
+    }
+
+    .warden-selection {
+      display: none;
+      margin-bottom: 10px;
+    }
+
+    .complaint-creator button, .hygiene-creator button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #4a148c;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+      position: relative;
+    }
+
+    .complaint-creator button:hover, .hygiene-creator button:hover {
+      background-color: #380a6b;
+    }
+
+    .complaint-creator button:disabled, .hygiene-creator button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .complaint-creator button .spinner, .hygiene-creator button .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    .complaint-creator button.loading .spinner, .hygiene-creator button.loading .spinner {
+      display: inline-block;
+    }
+
+    .complaint-creator button.loading span, .hygiene-creator button.loading span {
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Filter Section */
+    .filter-section {
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .filter-section label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .filter-section select {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .filter-section select:focus {
+      border-color: #4a148c;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(74, 20, 140, 0.1);
+    }
+
+    /* Posts List */
+    .posts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .complaint, .hygiene-post {
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid #e0e0e0;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .complaint:hover, .hygiene-post:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .post-header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #4a148c;
+    }
+
+    .post-header .user-info {
+      flex-grow: 1;
+    }
+
+    .post-header .user-info h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+
+    .post-header .user-info p {
+      font-size: 12px;
+      color: #666;
+      margin: 0;
+    }
+
+    .post-content p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .post-content p strong {
+      color: #4a148c;
+    }
+
+    .post-content .status {
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 12px;
+      display: inline-block;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .post-content .status.pending {
+      background-color: #ffe082;
+      color: #333;
+    }
+
+    .post-content .status.in-progress {
+      background-color: #64b5f6;
+      color: #fff;
+    }
+
+    .post-content .status.resolved {
+      background-color: #81c784;
+      color: #fff;
+    }
+
+    .post-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-top: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .post-content img:hover {
+      transform: scale(1.02);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 10px;
+    }
+
+    .action-buttons button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
+
+    .action-buttons .edit-btn {
+      background-color: #2196f3;
+      color: white;
+    }
+
+    .action-buttons .edit-btn:hover {
+      background-color: #1976d2;
+    }
+
+    .action-buttons .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .action-buttons .delete-btn:hover {
+      background-color: #c0392b;
+    }
+
+    .status-update {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 10px;
+    }
+
+    .status-update select {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .status-update button {
+      padding: 8px 16px;
+      border: none;
+      background-color: #4a148c;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .status-update button:hover {
+      background-color: #380a6b;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .navbar-left .hamburger {
+        display: block;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .content-wrapper {
+        margin-left: 0;
+      }
+
+      .toggle-group, .radio-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .complaint-creator button, .hygiene-creator button {
+        width: 100%;
+      }
+
+      .filter-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .complaint, .hygiene-post {
+        padding: 10px;
+      }
+
+      .section h2 {
+        font-size: 18px;
+      }
+
+      .post-header img {
+        width: 32px;
+        height: 32px;
+      }
+
+      .post-header .user-info h3 {
+        font-size: 13px;
+      }
+
+      .post-header .user-info p {
+        font-size: 11px;
+      }
+
+      .post-content p {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <span class="material-icons hamburger" onclick="toggleSidebar()">menu</span>
+      <img src="hlogo.png" alt="HConnect Logo" />
+      <span>HConnect</span>
+    </div>
+    <div class="navbar-right">
+      <span id="username">User</span>
+      <div class="profile-dropdown">
+        <img id="profilePic" src="" alt="Profile" onclick="toggleDropdown()" />
+        <div class="dropdown-menu" id="dropdownMenu">
+          <a href="profile.html">View Profile</a>
+          <a href="settings.html">Settings</a>
+          <a href="#" onclick="signOut()">Sign Out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Left Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <h2>Navigation</h2>
+    <a href="dashboard.html"><span class="material-icons">home</span>Home</a>
+    <a href="complaints.html" class="active"><span class="material-icons">report</span>Complaints</a>
+    <a href="lostfound.html"><span class="material-icons">search</span>Lost & Found</a>
+    <a href="announcement.html"><span class="material-icons">campaign</span>Announcement</a>
+    <a href="event.html"><span class="material-icons">contact_mail</span>Events</a>
+    <a href="contact.html"><span class="material-icons">contact_mail</span>Contact</a>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content-wrapper">
+    <div class="main-container">
+      <div class="section" id="complaints">
+        <h2>
+          <span class="material-icons">report</span>
+          Complaints & Hygiene Posts
+        </h2>
+
+        <!-- Toggle between General Complaint and Hygiene Post -->
+        <div class="toggle-group">
+          <input type="radio" name="postType" id="general" value="general" checked />
+          <label for="general">General Complaint</label>
+          <input type="radio" name="postType" id="hygiene" value="hygiene" />
+          <label for="hygiene">Hygiene Post</label>
+        </div>
+
+        <!-- General Complaint Form -->
+        <div class="complaint-creator" id="complaintForm">
+          <label for="complaintCategory">Category</label>
+          <select id="complaintCategory">
+            <option value="" disabled selected>Select a category</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="food">Food</option>
+            <option value="room">Room</option>
+            <option value="other">Other</option>
+          </select>
+
+          <label for="complaintTitle">Title</label>
+          <input type="text" id="complaintTitle" placeholder="Enter complaint title" />
+
+          <label for="complaintDescription">Description</label>
+          <textarea id="complaintDescription" placeholder="Describe your complaint here..."></textarea>
+
+          <label for="complaintImage">Upload Image (Optional)</label>
+          <input type="file" id="complaintImage" accept="image/*" />
+
+          <label>Complaint Visibility</label>
+          <div class="radio-group">
+            <input type="radio" name="visibility" id="public" value="public" checked />
+            <label for="public">Public</label>
+            <input type="radio" name="visibility" id="private" value="private" />
+            <label for="private">Private</label>
+          </div>
+
+          <div class="warden-selection" id="wardenSelection">
+            <label for="wardenSelect">Select Warden</label>
+            <select id="wardenSelect">
+              <option value="" disabled selected>Select a warden</option>
+              <option value="balaji_arunachalam">Balaji Arunachalam (4th Floor Warden)</option>
+              <option value="prem_kumar">Prem Kumar (General Warden)</option>
+            </select>
+          </div>
+
+          <button onclick="submitComplaint()" id="submitComplaintBtn">
+            <div class="spinner"></div>
+            <span>Submit Complaint</span>
+          </button>
+        </div>
+
+        <!-- Hygiene Post Form -->
+        <div class="hygiene-creator" id="hygieneForm" style="display: none;">
+          <label for="hygieneDescription">Description</label>
+          <textarea id="hygieneDescription" placeholder="Write about the hygiene issue..."></textarea>
+
+          <label for="hygieneImage">Upload Image</label>
+          <input type="file" id="hygieneImage" accept="image/*" />
+
+          <button onclick="submitHygienePost()" id="submitHygieneBtn">
+            <div class="spinner"></div>
+            <span>Share Post</span>
+          </button>
+        </div>
+
+        <!-- Filter Complaints -->
+        <div class="filter-section">
+          <label for="categoryFilter">Filter by Category:</label>
+          <select id="categoryFilter" onchange="filterPosts()">
+            <option value="all">All</option>
+            <option value="general">General Complaints</option>
+            <option value="hygiene">Hygiene Posts</option>
+          </select>
+          <label for="statusFilter">Filter by Status:</label>
+          <select id="statusFilter" onchange="filterPosts()">
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="in-progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </div>
+
+        <!-- Posts List -->
+        <div class="posts-list" id="postsList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-storage-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAgdzfUF7cfktDdjf-8T8UgmK5p_4Ol9I",
+      authDomain: "hconnect-41c7c.firebaseapp.com",
+      databaseURL: "https://hconnect-41c7c-default-rtdb.firebaseio.com",
+      projectId: "hconnect-41c7c",
+      storageBucket: "hconnect-41c7c.appspot.com",
+      messagingSenderId: "927970333668",
+      appId: "1:927970333668:web:541f523bea1a7f9549adf1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const storage = firebase.storage();
+    let currentUser = {};
+    let allPosts = [];
+
+    // Authentication State
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        currentUser = {
+          uid: user.uid,
+          name: user.displayName || "User",
+          photo: user.photoURL || "default.jpg"
+        };
+        document.getElementById('username').textContent = currentUser.name;
+        document.getElementById('profilePic').src = currentUser.photo;
+        db.ref(`users/${user.uid}`).update({
+          isAdmin: false,
+          name: currentUser.name,
+          photo: currentUser.photo
+        });
+        loadPosts();
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+
+    // Toggle Dropdown
+    function toggleDropdown() {
+      const menu = document.getElementById('dropdownMenu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('#profilePic')) {
+        const dropdown = document.getElementById('dropdownMenu');
+        if (dropdown && dropdown.style.display === 'block') {
+          dropdown.style.display = 'none';
+        }
+      }
+    }
+
+    // Toggle Sidebar
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('active');
+    }
+
+    // Sign Out
+    function signOut() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "index.html";
+      }).catch((error) => {
+        alert("Sign out failed: " + error.message);
+      });
+    }
+
+    // Toggle between General Complaint and Hygiene Post Forms
+    document.querySelectorAll('input[name="postType"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        document.getElementById('complaintForm').style.display = radio.value === 'general' ? 'block' : 'none';
+        document.getElementById('hygieneForm').style.display = radio.value === 'hygiene' ? 'block' : 'none';
+      });
+    });
+
+    // Show/Hide Warden Selection
+    document.querySelectorAll('input[name="visibility"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        const wardenSelection = document.getElementById('wardenSelection');
+        wardenSelection.style.display = radio.value === 'private' ? 'block' : 'none';
+      });
+    });
+
+    // Submit General Complaint
+    async function submitComplaint() {
+      const categorySelect = document.getElementById('complaintCategory');
+      const titleInput = document.getElementById('complaintTitle');
+      const descriptionInput = document.getElementById('complaintDescription');
+      const imageInput = document.getElementById('complaintImage');
+      const visibility = document.querySelector('input[name="visibility"]:checked').value;
+      const wardenSelect = document.getElementById('wardenSelect');
+      const submitBtn = document.getElementById('submitComplaintBtn');
+
+      const category = categorySelect.value;
+      const title = titleInput.value.trim();
+      const description = descriptionInput.value.trim();
+      const imageFile = imageInput.files[0];
+      const warden = visibility === 'private' ? wardenSelect.value : null;
+
+      // Reset error states
+      categorySelect.classList.remove('error');
+      titleInput.classList.remove('error');
+      descriptionInput.classList.remove('error');
+      if (visibility === 'private') wardenSelect.classList.remove('error');
+
+      // Validation
+      let hasError = false;
+      if (!category) {
+        categorySelect.classList.add('error');
+        hasError = true;
+      }
+      if (!title) {
+        titleInput.classList.add('error');
+        hasError = true;
+      }
+      if (!description) {
+        descriptionInput.classList.add('error');
+        hasError = true;
+      }
+      if (visibility === 'private' && !warden) {
+        wardenSelect.classList.add('error');
+        hasError = true;
+      }
+
+      if (hasError) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
+
+      try {
+        let imageUrl = null;
+        if (imageFile) {
+          const storageRef = storage.ref(`complaints/${currentUser.uid}/${Date.now()}_${imageFile.name}`);
+          const snapshot = await storageRef.put(imageFile);
+          imageUrl = await snapshot.ref.getDownloadURL();
+        }
+
+        const complaint = {
+          category,
+          title,
+          description,
+          imageUrl,
+          visibility,
+          warden: warden || null,
+          userId: currentUser.uid,
+          userName: currentUser.name,
+          userPhoto: currentUser.photo,
+          status: 'pending',
+          date: new Date().toISOString()
+        };
+
+        await db.ref('complaints').push(complaint);
+        alert('Complaint submitted successfully!');
+        categorySelect.value = '';
+        titleInput.value = '';
+        descriptionInput.value = '';
+        imageInput.value = '';
+        document.querySelector('input[name="visibility"][value="public"]').checked = true;
+        wardenSelect.value = '';
+        document.getElementById('wardenSelection').style.display = 'none';
+        loadPosts();
+      } catch (error) {
+        alert('Failed to submit complaint: ' + error.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+      }
+    }
+
+    // Submit Hygiene Post
+    async function submitHygienePost() {
+      const descriptionInput = document.getElementById('hygieneDescription');
+      const imageInput = document.getElementById('hygieneImage');
+      const submitBtn = document.getElementById('submitHygieneBtn');
+
+      const description = descriptionInput.value.trim();
+      const imageFile = imageInput.files[0];
+
+      // Reset error states
+      descriptionInput.classList.remove('error');
+      imageInput.classList.remove('error');
+
+      // Validation
+      let hasError = false;
+      if (!description) {
+        descriptionInput.classList.add('error');
+        hasError = true;
+      }
+      if (!imageFile) {
+        alert('Please upload an image.');
+        hasError = true;
+      }
+
+      if (hasError) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
+
+      try {
+        const storageRef = storage.ref(`hygienePosts/${currentUser.uid}/${Date.now()}_${imageFile.name}`);
+        const snapshot = await storageRef.put(imageFile);
+        const imageUrl = await snapshot.ref.getDownloadURL();
+
+        const post = {
+          userId: currentUser.uid,
+          userName: currentUser.name,
+          userPhoto: currentUser.photo,
+          description,
+          imageUrl,
+          date: new Date().toISOString()
+        };
+
+        await db.ref('hygienePosts').push(post);
+        alert('Post shared successfully!');
+        descriptionInput.value = '';
+        imageInput.value = '';
+        loadPosts();
+      } catch (error) {
+        alert('Failed to share post: ' + error.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+      }
+    }
+
+    // Load Posts
+    function loadPosts() {
+      const postsList = document.getElementById('postsList');
+      postsList.innerHTML = '';
+      allPosts = [];
+
+      db.ref(`users/${currentUser.uid}/isAdmin`).once('value', adminSnapshot => {
+        const isAdmin = adminSnapshot.val() || false;
+
+        // Load Complaints
+        db.ref('complaints').on('value', snapshot => {
+          allPosts = [];
+          snapshot.forEach(child => {
+            const complaint = child.val();
+            complaint.id = child.key;
+            complaint.type = 'complaint';
+            if (complaint.visibility === 'public' || complaint.userId === currentUser.uid || isAdmin) {
+              allPosts.push(complaint);
+            }
+          });
+
+          // Load Hygiene Posts
+          db.ref('hygienePosts').on('value', hygieneSnapshot => {
+            hygieneSnapshot.forEach(child => {
+              const post = child.val();
+              post.id = child.key;
+              post.type = 'hygiene';
+              allPosts.push(post);
+            });
+
+            // Sort by date (newest first)
+            allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+            renderPosts(allPosts);
+          });
+        });
+      });
+    }
+
+    // Filter Posts
+    function filterPosts() {
+      const categoryFilter = document.getElementById('categoryFilter').value;
+      const statusFilter = document.getElementById('statusFilter').value;
+
+      let filteredPosts = allPosts;
+
+      // Filter by category
+      if (categoryFilter !== 'all') {
+        filteredPosts = filteredPosts.filter(post => post.type === categoryFilter);
+      }
+
+      // Filter by status (only applies to complaints)
+      if (statusFilter !== 'all') {
+        filteredPosts = filteredPosts.filter(post => post.type === 'hygiene' || post.status === statusFilter);
+      }
+
+      renderPosts(filteredPosts);
+    }
+
+    // Render Posts
+    function renderPosts(posts) {
+      const postsList = document.getElementById('postsList');
+      postsList.innerHTML = '';
+
+      db.ref(`users/${currentUser.uid}/isAdmin`).once('value', adminSnapshot => {
+        const isAdmin = adminSnapshot.val() || false;
+
+        posts.forEach(post => {
+          const postDiv = document.createElement('div');
+          postDiv.className = post.type === 'complaint' ? 'complaint' : 'hygiene-post';
+
+          // Post Header (Profile Picture, Name, Timestamp)
+          const postHeader = document.createElement('div');
+          postHeader.className = 'post-header';
+          postHeader.innerHTML = `
+            <img src="${post.userPhoto}" alt="${post.userName}'s Profile" />
+            <div class="user-info">
+              <h3>${post.userName}</h3>
+              <p>${new Date(post.date).toLocaleString()}</p>
+            </div>
+          `;
+
+          // Post Content
+          const postContent = document.createElement('div');
+          postContent.className = 'post-content';
+          if (post.type === 'complaint') {
+            postContent.innerHTML = `
+              <p><strong>Category:</strong> ${post.category.charAt(0).toUpperCase() + post.category.slice(1)}</p>
+              <p><strong>Title:</strong> ${post.title}</p>
+              <p><strong>Description:</strong> ${post.description}</p>
+              <p><strong>Visibility:</strong> ${post.visibility.charAt(0).toUpperCase() + post.visibility.slice(1)}</p>
+              ${post.visibility === 'private' ? `<p><strong>Warden:</strong> ${post.warden === 'balaji_arunachalam' ? 'Balaji Arunachalam (4th Floor Warden)' : 'Prem Kumar (General Warden)'}</p>` : ''}
+              <p class="status ${post.status}">${post.status.charAt(0).toUpperCase() + post.status.slice(1)}</p>
+              ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Complaint Image" />` : ''}
+            `;
+          } else {
+            postContent.innerHTML = `
+              <p><strong>Description:</strong> ${post.description}</p>
+              <img src="${post.imageUrl}" alt="Hygiene Post Image" />
+            `;
+          }
+
+          postDiv.appendChild(postHeader);
+          postDiv.appendChild(postContent);
+
+          // Action Buttons (Edit/Delete)
+          if (post.userId === currentUser.uid || isAdmin) {
+            const actionButtons = document.createElement('div');
+            actionButtons.className = 'action-buttons';
+
+            if (post.type === 'complaint' && post.status === 'pending' && post.userId === currentUser.uid) {
+              const editBtn = document.createElement('button');
+              editBtn.className = 'edit-btn';
+              editBtn.textContent = 'Edit';
+              editBtn.onclick = () => editComplaint(post.id, post);
+              actionButtons.appendChild(editBtn);
+            }
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.onclick = () => post.type === 'complaint' ? deleteComplaint(post.id) : deleteHygienePost(post.id);
+            actionButtons.appendChild(deleteBtn);
+
+            postDiv.appendChild(actionButtons);
+          }
+
+          // Admin Status Update
+          if (isAdmin && post.type === 'complaint') {
+            const statusUpdateDiv = document.createElement('div');
+            statusUpdateDiv.className = 'status-update';
+            statusUpdateDiv.innerHTML = `
+              <select id="statusUpdate_${post.id}">
+                <option value="pending" ${post.status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="in-progress" ${post.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                <option value="resolved" ${post.status === 'resolved' ? 'selected' : ''}>Resolved</option>
+              </select>
+              <button onclick="updateComplaintStatus('${post.id}')">Update Status</button>
+            `;
+            postDiv.appendChild(statusUpdateDiv);
+          }
+
+          postsList.appendChild(postDiv);
+        });
+      });
+    }
+
+    // Edit Complaint
+    function editComplaint(id, complaint) {
+      const newTitle = prompt('Edit Title:', complaint.title);
+      const newDescription = prompt('Edit Description:', complaint.description);
+      if (newTitle && newDescription) {
+        db.ref(`complaints/${id}`).update({
+          title: newTitle.trim(),
+          description: newDescription.trim(),
+          date: new Date().toISOString()
+        }).then(() => {
+          alert('Complaint updated successfully!');
+          loadPosts();
+        }).catch(() => {
+          alert('Failed to update complaint.');
+        });
+      }
+    }
+
+    // Update Complaint Status (Admin)
+    function updateComplaintStatus(id) {
+      const newStatus = document.getElementById(`statusUpdate_${id}`).value;
+      db.ref(`complaints/${id}`).update({ status: newStatus }).then(() => {
+        alert('Status updated successfully!');
+        loadPosts();
+      }).catch(() => {
+        alert('Failed to update status.');
+      });
+    }
+
+    // Delete Complaint
+    function deleteComplaint(id) {
+      if (confirm("Are you sure you want to delete this complaint?")) {
+        db.ref(`complaints/${id}`).remove()
+          .then(() => {
+            alert("Complaint deleted.");
+            loadPosts();
+          })
+          .catch(() => alert("Failed to delete complaint."));
+      }
+    }
+
+    // Delete Hygiene Post
+    function deleteHygienePost(id) {
+      if (confirm("Are you sure you want to delete this post?")) {
+        db.ref(`hygienePosts/${id}`).remove()
+          .then(() => {
+            alert("Post deleted.");
+            loadPosts();
+          })
+          .catch(() => alert("Failed to delete post."));
+      }
+    }
+  </script>
+</body>
+</html>

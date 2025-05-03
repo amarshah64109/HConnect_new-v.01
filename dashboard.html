@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HConnect Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f5f5f5;
+    }
+
+    /* Modern Top Navbar (Same as Lost & Found) */
+    .navbar {
+      background-color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-left .hamburger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #4a148c;
+      margin-right: 15px;
+    }
+
+    .navbar-left img {
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    .navbar-left span {
+      font-size: 22px;
+      font-weight: 600;
+      color: #4a148c;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .navbar-right span {
+      font-size: 15px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-dropdown img {
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 48px;
+      background-color: white;
+      min-width: 140px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      border-radius: 6px;
+      z-index: 1002;
+      overflow: hidden;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 10px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f0f0f0;
+    }
+
+    /* Left Sidebar (Same as Lost & Found) */
+    .sidebar {
+      width: 220px;
+      background-color: #fff;
+      height: calc(100vh - 70px);
+      position: fixed;
+      top: 70px;
+      left: 0;
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+      z-index: 999;
+    }
+
+    .sidebar h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #4a148c;
+      margin-bottom: 20px;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .sidebar a:hover {
+      background-color: #f0f0f0;
+    }
+
+    .sidebar a.active {
+      background-color: #4a148c;
+      color: #fff;
+    }
+
+    .sidebar a .material-icons {
+      margin-right: 10px;
+      font-size: 20px;
+    }
+
+    /* Content Area */
+    .content-wrapper {
+      margin-left: 220px;
+      padding-top: 20px;
+    }
+
+    .main-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .section {
+      background-color: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .section h2 {
+      margin-bottom: 15px;
+      color: #4a148c;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    /* Updates Section */
+    .update-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .update-item {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .update-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+
+    .update-item p {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .update-item p strong {
+      color: #4a148c;
+    }
+
+    /* Events Section */
+    .event-creator {
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .event-creator label {
+      display: block;
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .event-creator input,
+    .event-creator textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .event-creator input:focus,
+    .event-creator textarea:focus {
+      border-color: #4a148c;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(74, 20, 140, 0.1);
+    }
+
+    .event-creator input.error,
+    .event-creator textarea.error {
+      border-color: #e74c3c;
+    }
+
+    .event-creator button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #4a148c;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+      position: relative;
+    }
+
+    .event-creator button:hover {
+      background-color: #380a6b;
+    }
+
+    .event-creator button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .event-creator button .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    .event-creator button.loading .spinner {
+      display: inline-block;
+    }
+
+    .event-creator button.loading span {
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .event-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .event-item {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .event-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+
+    .event-item h3 {
+      font-size: 16px;
+      color: #4a148c;
+      margin-bottom: 5px;
+    }
+
+    .event-item p {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .event-item img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .navbar-left .hamburger {
+        display: block;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .content-wrapper {
+        margin-left: 0;
+      }
+
+      .update-list,
+      .event-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .event-creator,
+      .update-item,
+      .event-item {
+        padding: 10px;
+      }
+
+      .section h2 {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Modern Top Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <span class="material-icons hamburger" onclick="toggleSidebar()">menu</span>
+      <img src="hlogo.png" alt="HConnect Logo" />
+      <span>HConnect</span>
+    </div>
+    <div class="navbar-right">
+      <span id="username">User</span>
+      <div class="profile-dropdown">
+        <img id="profilePic" src="" alt="Profile" onclick="toggleDropdown()" />
+        <div class="dropdown-menu" id="dropdownMenu">
+          <a href="profile.html">View Profile</a>
+          <a href="settings.html">Settings</a>
+          <a href="#" onclick="signOut()">Sign Out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Left Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <h2>Navigation</h2>
+    <a href="dashboard.html" class="active"><span class="material-icons">home</span>Home</a>
+    <a href="complaints.html"><span class="material-icons">report</span>Complaints</a>
+    <a href="lostfound.html"><span class="material-icons">search</span>Lost & Found</a>
+    <a href="announcement.html"><span class="material-icons">campaign</span>Announcement</a>
+    <a href="event.html"><span class="material-icons">contact_mail</span>Events</a>
+    <a href="contact.html"><span class="material-icons">contact_mail</span>Contact</a>
+
+    
+  </div>
+
+  <!-- Content Area -->
+  <div class="content-wrapper">
+    <div class="main-container">
+      <!-- Updates Section -->
+      <div class="section" id="updates">
+        <h2>Updates from Management</h2>
+        <div class="update-list">
+          <div class="update-item">
+            <p><strong>Maintenance:</strong> Water supply will be off from 10AM–12PM today.</p>
+          </div>
+          <div class="update-item">
+            <p><strong>Notice:</strong> Hostel gate closes at 10PM sharp. Late entry not allowed.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Events Section -->
+      <div class="section" id="events">
+        <h2>Hostel Events</h2>
+        <div class="event-creator">
+          <label for="eventTitle">Event Title:</label>
+          <input type="text" id="eventTitle" placeholder="E.g. Movie Night at 8PM 🎬" />
+          
+          <label for="eventDescription">Event Description:</label>
+          <textarea id="eventDescription" placeholder="Describe the event..."></textarea>
+          
+          <label for="eventImage">Upload Event Image:</label>
+          <input type="file" id="eventImage" accept="image/*" />
+          
+          <button onclick="addEvent()" id="postEventBtn">
+            <div class="spinner"></div>
+            <span>Post Event</span>
+          </button>
+        </div>
+
+        <div class="event-list" id="eventList">
+          <div class="event-item">
+            <h3>Quiz Night</h3>
+            <p>Description: Thursday 7PM in the common hall.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Auth + JS -->
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAgdzfUF7cfktDdjf-8T8UgmK5p_4Ol9I",
+      authDomain: "hconnect-41c7c.firebaseapp.com",
+      projectId: "hconnect-41c7c",
+      storageBucket: "hconnect-41c7c.appspot.com",
+      messagingSenderId: "927970333668",
+      appId: "1:927970333668:web:541f523bea1a7f9549adf1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        document.getElementById('username').textContent = user.displayName || "User";
+        document.getElementById('profilePic').src = user.photoURL || "default.jpg";
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+
+    function addEvent() {
+      const titleInput = document.getElementById('eventTitle');
+      const descriptionInput = document.getElementById('eventDescription');
+      const imageInput = document.getElementById('eventImage');
+      const postButton = document.getElementById('postEventBtn');
+
+      const title = titleInput.value.trim();
+      const description = descriptionInput.value.trim();
+      const image = imageInput.files[0];
+
+      // Reset error states
+      titleInput.classList.remove('error');
+      descriptionInput.classList.remove('error');
+
+      let hasError = false;
+      if (!title) {
+        titleInput.classList.add('error');
+        hasError = true;
+      }
+      if (!description) {
+        descriptionInput.classList.add('error');
+        hasError = true;
+      }
+
+      if (hasError || !image) {
+        alert('Please fill in all fields and upload an image.');
+        return;
+      }
+
+      // Show loading state
+      postButton.disabled = true;
+      postButton.classList.add('loading');
+
+      // Simulate posting (replace with actual Firebase Storage upload if needed)
+      setTimeout(() => {
+        const eventList = document.getElementById('eventList');
+        const newEvent = document.createElement('div');
+        newEvent.className = 'event-item';
+        newEvent.innerHTML = `<h3>${title}</h3><p>Description: ${description}</p><img src="${URL.createObjectURL(image)}" alt="Event Image" />`;
+        eventList.prepend(newEvent);
+
+        // Reset form
+        titleInput.value = '';
+        descriptionInput.value = '';
+        imageInput.value = '';
+
+        // Reset button state
+        postButton.disabled = false;
+        postButton.classList.remove('loading');
+      }, 1000);
+    }
+
+    function toggleDropdown() {
+      const menu = document.getElementById('dropdownMenu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('active');
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('#profilePic')) {
+        const dropdown = document.getElementById('dropdownMenu');
+        if (dropdown && dropdown.style.display === 'block') {
+          dropdown.style.display = 'none';
+        }
+      }
+    }
+
+    function signOut() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "index.html";
+      }).catch((error) => {
+        alert("Sign out failed: " + error.message);
+      });
+    }
+  </script>
+</body>
+</html>

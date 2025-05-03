@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HConnect Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f0f2f5;
+    }
+
+    .navbar {
+      background-color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-left img {
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    .navbar-left span {
+      font-size: 22px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .navbar-center {
+      display: flex;
+      gap: 30px;
+    }
+
+    .navbar-center a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    .navbar-center a:hover {
+      color: #4a148c;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .navbar-right span {
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-dropdown img {
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: white;
+      min-width: 140px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      border-radius: 6px;
+      z-index: 1001;
+      overflow: hidden;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 10px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f0f0f0;
+    }
+
+    .sub-navbar {
+      display: flex;
+      justify-content: space-between;
+      background-color: #fff;
+      padding: 15px 20px;
+      border-bottom: 2px solid #ddd;
+      font-weight: 600;
+    }
+
+    .sub-navbar a {
+      text-decoration: none;
+      color: #333;
+      font-size: 18px;
+      padding: 10px 15px;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+
+    .sub-navbar a:hover {
+      background-color: #4a148c;
+      color: white;
+    }
+
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section {
+      background-color: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .section h2 {
+      margin-bottom: 10px;
+      color: #4a148c;
+    }
+
+    .update-item {
+      background-color: #f9f9f9;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .update-creator textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-top: 5px;
+    }
+
+    .update-creator button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border: none;
+      background-color: #4a148c;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .update-list {
+      margin-top: 20px;
+    }
+
+    .update-list .update-item {
+      background-color: #f9f9f9;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .navbar-center {
+        display: none;
+      }
+
+      .sub-navbar {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .sub-navbar a {
+        padding: 8px 12px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Navigation Bar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="hlogo.png" alt="HConnect Logo" />
+      <span>HConnect</span>
+    </div>
+    <div class="navbar-center">
+      <a href="dashboard.html">Home</a>
+      <a href="complaints.html">Complaints</a>
+      <a href="lostfound.html">Lost & Found</a>
+      <a href="hygiene.html">Hygiene</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="navbar-right">
+      <span id="username">User</span>
+      <div class="profile-dropdown">
+        <img id="profilePic" src="" alt="Profile" onclick="toggleDropdown()" />
+        <div class="dropdown-menu" id="dropdownMenu">
+          <a href="profile.html">View Profile</a>
+          <a href="settings.html">Settings</a>
+          <a href="#" onclick="signOut()">Sign Out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sub Navigation Bar (Updates and Events) -->
+  <div class="sub-navbar">
+    <a href="update.html">Updates</a>
+    <a href="event.html">Events</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-container">
+
+    <!-- Updates Section -->
+    <div class="section">
+      <h2>Post an Update</h2>
+      <div class="update-creator">
+        <textarea id="updateDescription" placeholder="What's the update?" rows="4"></textarea>
+        <button onclick="postUpdate()">Post Update</button>
+      </div>
+    </div>
+
+    <!-- Updates List -->
+    <div class="section" id="updateList">
+      <!-- Update items will be dynamically added here -->
+    </div>
+
+  </div>
+
+  <!-- Firebase Auth + JS -->
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAgdzfUF7cfktDdjf-8T8UgmK5p_4Ol9I",
+      authDomain: "hconnect-41c7c.firebaseapp.com",
+      projectId: "hconnect-41c7c",
+      storageBucket: "hconnect-41c7c.appspot.com",
+      messagingSenderId: "927970333668",
+      appId: "1:927970333668:web:541f523bea1a7f9549adf1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        document.getElementById('username').textContent = user.displayName || "User";
+        document.getElementById('profilePic').src = user.photoURL || "default.jpg";
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+
+    // Post Update Function
+    function postUpdate() {
+      const description = document.getElementById('updateDescription').value.trim();
+      const userName = document.getElementById('username').textContent || "User";
+      const userPic = document.getElementById('profilePic').src || "default.jpg";
+      const dateStr = new Date().toLocaleString();
+
+      if (!description) return;
+
+      const newUpdate = {
+        userName,
+        userPic,
+        dateStr,
+        description
+      };
+
+      db.ref("updates").push(newUpdate);
+      document.getElementById('updateDescription').value = '';  // Clear input
+    }
+
+    // Load Updates from Firebase
+    db.ref("updates").on("child_added", function(snapshot) {
+      const updateData = snapshot.val();
+      const updateItem = document.createElement('div');
+      updateItem.className = 'update-item';
+      updateItem.innerHTML = `<p><strong>${updateData.userName} (${updateData.dateStr})</strong></p><p>${updateData.description}</p>`;
+      document.getElementById('updateList').prepend(updateItem);
+    });
+
+    function toggleDropdown() {
+      const menu = document.getElementById('dropdownMenu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('#profilePic')) {
+        const dropdown = document.getElementById('dropdownMenu');
+        if (dropdown && dropdown.style.display === 'block') {
+          dropdown.style.display = 'none';
+        }
+      }
+    }
+
+    function signOut() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "index.html";
+      }).catch((error) => {
+        alert("Sign out failed: " + error.message);
+      });
+    }
+  </script>
+</body>
+</html>

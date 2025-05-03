@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HConnect | Events</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #f0f2f5;
+      min-height: 100vh;
+    }
+
+    /* Top Navbar */
+    .navbar {
+      background: #ffffff;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-left .hamburger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #1b74e4;
+      margin-right: 15px;
+      transition: color 0.3s ease;
+    }
+
+    .navbar-left .hamburger:hover {
+      color: #0a58ca;
+    }
+
+    .navbar-left img {
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    .navbar-left span {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1b74e4;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .navbar-right span {
+      font-size: 15px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .profile-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-dropdown img {
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 1px solid #e0e0e0;
+      transition: border-color 0.3s ease;
+    }
+
+    .profile-dropdown img:hover {
+      border-color: #1b74e4;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background: #fff;
+      min-width: 140px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      z-index: 1002;
+      overflow: hidden;
+      border: 1px solid #e0e0e0;
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 12px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.3s ease;
+    }
+
+    .dropdown-menu a:hover {
+      background: #f5f5f5;
+    }
+
+    /* Left Sidebar (Replaced navbar-center) */
+    .sidebar {
+      width: 220px;
+      background: #fff;
+      height: calc(100vh - 65px);
+      position: fixed;
+      top: 65px;
+      left: 0;
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+      z-index: 999;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    .sidebar h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1b74e4;
+      margin-bottom: 20px;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .sidebar a:hover {
+      background: #f5f5f5;
+      color: #1b74e4;
+    }
+
+    .sidebar a.active {
+      background: #1b74e4;
+      color: #fff;
+    }
+
+    .sidebar a .material-icons {
+      margin-right: 10px;
+      font-size: 20px;
+    }
+
+    /* Sub-Navbar */
+    .sub-navbar {
+      background: #fff;
+      padding: 10px 20px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .sub-navbar a {
+      text-decoration: none;
+      color: #333;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 8px 15px;
+      border-radius: 6px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .sub-navbar a:hover {
+      background: #f5f5f5;
+      color: #1b74e4;
+    }
+
+    .sub-navbar a.active {
+      background: #1b74e4;
+      color: #fff;
+    }
+
+    /* Content Area */
+    .content-wrapper {
+      margin-left: 220px;
+      padding: 20px;
+    }
+
+    .main-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+
+    .section {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #e0e0e0;
+    }
+
+    .section h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1b74e4;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section h2 .material-icons {
+      font-size: 20px;
+      color: #1b74e4;
+    }
+
+    /* Event Creator */
+    .event-creator {
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .event-creator .post-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .event-creator img {
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+      border: 1px solid #e0e0e0;
+    }
+
+    .event-creator textarea {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 20px;
+      border: 1px solid #e0e0e0;
+      font-size: 14px;
+      resize: none;
+      height: 40px;
+      transition: border-color 0.3s ease;
+      background: #f5f5f5;
+    }
+
+    .event-creator textarea:focus {
+      border-color: #1b74e4;
+      outline: none;
+    }
+
+    .event-creator .upload-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 8px;
+    }
+
+    .event-creator .upload-controls .photo-icon {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      color: #666;
+      font-size: 14px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      transition: background 0.3s ease;
+    }
+
+    .event-creator .upload-controls .photo-icon:hover {
+      background: #f0f0f0;
+    }
+
+    .event-creator .upload-controls input[type="file"] {
+      display: none;
+    }
+
+    .event-creator .upload-controls button {
+      background: #1b74e4;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background 0.3s ease;
+    }
+
+    .event-creator .upload-controls button:hover {
+      background: #0a58ca;
+    }
+
+    /* Event Feed */
+    .event-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .event-item {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #e0e0e0;
+    }
+
+    .event-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .event-header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #e0e0e0;
+    }
+
+    .event-header .user-info {
+      flex-grow: 1;
+    }
+
+    .event-header .user-info h3 {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin: 0;
+    }
+
+    .event-header .user-info p {
+      font-size: 12px;
+      color: #666;
+      margin: 0;
+    }
+
+    .event-content p {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.5;
+      margin: 5px 0;
+    }
+
+    .event-content img {
+      width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: 1px solid #e0e0e0;
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .navbar-left .hamburger {
+        display: block;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .content-wrapper {
+        margin-left: 0;
+      }
+
+      .sub-navbar {
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .sub-navbar a {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+
+      .event-creator .post-box {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .event-creator img {
+        margin-bottom: 10px;
+      }
+
+      .event-creator .upload-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .event-creator .upload-controls button {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section h2 {
+        font-size: 14px;
+      }
+
+      .event-header img {
+        width: 32px;
+        height: 32px;
+      }
+
+      .event-header .user-info h3 {
+        font-size: 13px;
+      }
+
+      .event-header .user-info p {
+        font-size: 11px;
+      }
+
+      .event-content p {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <span class="material-icons hamburger" onclick="toggleSidebar()">menu</span>
+      <img src="hlogo.png" alt="HConnect Logo" />
+      <span>HConnect</span>
+    </div>
+    <div class="navbar-right">
+      <span id="username">User</span>
+      <div class="profile-dropdown">
+        <img id="profilePic" src="default-avatar.png" alt="Profile" onclick="toggleDropdown()" />
+        <div class="dropdown-menu" id="dropdownMenu">
+          <a href="profile.html">View Profile</a>
+          <a href="settings.html">Settings</a>
+          <a href="#" onclick="signOut()">Sign Out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Left Sidebar (Replaced navbar-center) -->
+  <div class="sidebar" id="sidebar">
+    <h2>Navigation</h2>
+    <a href="dashboard.html"><span class="material-icons">home</span>Home</a>
+    <a href="complaints.html"><span class="material-icons">report</span>Complaints</a>
+    <a href="lostfound.html"><span class="material-icons">search</span>Lost & Found</a>
+    <a href="hygiene.html"><span class="material-icons">cleaning_services</span>Hygiene</a>
+    <a href="contact.html"><span class="material-icons">contact_mail</span>Contact</a>
+  </div>
+
+  <!-- Sub Navigation Bar -->
+  <div class="sub-navbar">
+    <a href="update.html">Updates</a>
+    <a href="event.html" class="active">Events</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    <div class="main-container">
+      <!-- Event Post Creator -->
+      <div class="section">
+        <div class="event-creator">
+          <div class="post-box">
+            <img id="postUserPic" src="default-avatar.png" alt="User" />
+            <textarea id="fbEventDescription" placeholder="Share an event..."></textarea>
+          </div>
+          <div class="upload-controls">
+            <div class="photo-icon" onclick="document.getElementById('fbEventImage').click()">
+              <span class="material-icons">photo</span>
+              Photo
+            </div>
+            <input type="file" id="fbEventImage" accept="image/*" />
+            <button onclick="postFacebookStyleEvent()">Post</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Feed -->
+      <div class="section">
+        <h2>
+          <span class="material-icons">event</span>
+          Event Feed
+        </h2>
+        <div class="event-feed" id="fbEventFeed">
+          <div class="loading">Loading events...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase & Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAgdzfUF7cfktDdjf-8T8UgmK5p_4Ol9I",
+      authDomain: "hconnect-41c7c.firebaseapp.com",
+      projectId: "hconnect-41c7c",
+      storageBucket: "hconnect-41c7c.appspot.com",
+      messagingSenderId: "927970333668",
+      appId: "1:927970333668:web:541f523bea1a7f9549adf1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        document.getElementById('username').textContent = user.displayName || "User";
+        document.getElementById('profilePic').src = user.photoURL || "default-avatar.png";
+        document.getElementById('postUserPic').src = user.photoURL || "default-avatar.png";
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+
+    function toggleDropdown() {
+      const menu = document.getElementById('dropdownMenu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('#profilePic')) {
+        const dropdown = document.getElementById('dropdownMenu');
+        if (dropdown && dropdown.style.display === 'block') {
+          dropdown.style.display = 'none';
+        }
+      }
+    };
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('active');
+    }
+
+    function signOut() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "index.html";
+      }).catch((error) => {
+        alert("Sign out failed: " + error.message);
+      });
+    }
+
+    function postFacebookStyleEvent() {
+      const desc = document.getElementById('fbEventDescription').value.trim();
+      const file = document.getElementById('fbEventImage').files[0];
+      const userName = document.getElementById('username').textContent || "User";
+      const userPic = document.getElementById('profilePic').src || "default-avatar.png";
+      const dateStr = new Date().toLocaleString();
+
+      if (!desc && !file) return;
+
+      const savePost = (imgURL = '') => {
+        const post = { userName, userPic, dateStr, desc, imgURL };
+        db.ref("eventPosts").push(post);
+      };
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          savePost(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        savePost();
+      }
+
+      document.getElementById('fbEventDescription').value = '';
+      document.getElementById('fbEventImage').value = '';
+    }
+
+    function loadeventposts() {
+      const feed = document.getElementById('fbEventFeed');
+      db.ref("eventPosts").on("value", snapshot => {
+        const data = snapshot.val();
+        feed.innerHTML = "";
+
+        if (data) {
+          Object.values(data).reverse().forEach(post => {
+            const postHTML = `
+              <div class="event-item">
+                <div class="event-header">
+                  <img src="${post.userPic}" alt="${post.userName}'s Profile" />
+                  <div class="user-info">
+                    <h3>${post.userName}</h3>
+                    <p>${post.dateStr}</p>
+                  </div>
+                </div>
+                <div class="event-content">
+                  <p>${post.desc}</p>
+                  ${post.imgURL ? `<img src="${post.imgURL}" alt="Event Image" />` : ''}
+                </div>
+              </div>
+            `;
+            feed.insertAdjacentHTML('beforeend', postHTML);
+          });
+        } else {
+          feed.innerHTML = '<div class="loading">No events yet. Be the first to post!</div>';
+        }
+      }, error => {
+        feed.innerHTML = '<div class="loading">Failed to load events: ' + error.message + '</div>';
+      });
+    }
+
+    loadeventposts();
+  </script>
+</body>
+</html>

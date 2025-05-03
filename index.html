@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HConnect – Sign In</title>
+
+  <!-- Font: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-auth-compat.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+        background: linear-gradient(to bottom right, #1b1b2f, #4a148c);
+
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 28px;
+      padding: 60px 50px;
+      width: 90%;
+      max-width: 520px;
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .container h1 {
+      font-size: 34px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .container p {
+      font-size: 16px;
+      color: #ccc;
+      margin-bottom: 30px;
+    }
+
+    .input-group {
+      width: 100%;
+      margin-bottom: 18px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: none;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 15px;
+      transition: 0.3s;
+      outline: none;
+    }
+
+    .input-group input::placeholder {
+      color: #bbb;
+    }
+
+    .input-group input:focus {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      color: #222;
+      padding: 16px 24px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      width: 100%;
+      max-width: 320px;
+      margin: 30px auto 0;
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+    }
+
+    .google-btn img {
+      height: 22px;
+      margin-right: 12px;
+    }
+
+    .google-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.4);
+    }
+
+    .footer {
+      margin-top: 60px;
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 40px 30px;
+      }
+
+      .container h1 {
+        font-size: 28px;
+      }
+
+      .google-btn {
+        font-size: 14px;
+        padding: 14px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Welcome HConnect</h1>
+    <p>Smart hostel living. Sign in to continue.</p>
+
+    <div class="input-group">
+      <input type="text" placeholder="Username">
+    </div>
+
+    <div class="input-group">
+      <input type="password" placeholder="Password">
+    </div>
+
+    <a href="javascript:void(0);" id="googleSignIn" class="google-btn">
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">
+      Sign in with Google
+    </a>
+
+    <div class="footer">
+      © 2025 HConnect. All rights reserved.
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAgdzfUF7cfktDdjf-8T8UgmK5p_4Ol9I",
+      authDomain: "hconnect-41c7c.firebaseapp.com",
+      projectId: "hconnect-41c7c",
+      storageBucket: "hconnect-41c7c.appspot.com",
+      messagingSenderId: "927970333668",
+      appId: "1:927970333668:web:541f523bea1a7f9549adf1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    document.getElementById("googleSignIn").addEventListener("click", () => {
+      firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+          const user = result.user;
+          alert("Welcome, " + user.displayName);
+          window.location.href = "dashboard.html"; // redirect after login
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("Login failed: " + error.message);
+        });
+    });
+  </script>
+
+</body>
+</html>

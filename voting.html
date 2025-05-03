@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HConnect Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      text-align: center;
+    }
+    nav {
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+    }
+    #complaint-section {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to HConnect Dashboard</h1>
+  <nav>
+    <button onclick="showComplaintForm()">📣 Submit Complaint</button>
+    <button onclick="showHygieneComplaints()">🧺 Hygiene Complaints</button>
+    <button onclick="showLostAndFound()">📦 Lost & Found</button>
+    <button onclick="showVoting()">🗳️ Voting Zone</button>
+  </nav>
+
+  <div id="complaint-section">
+    <h2>📣 Submit a Complaint</h2>
+    <textarea id="complaint" placeholder="Enter your complaint here..."></textarea><br>
+    <input type="file" id="imageInput" accept="image/*" /><br>
+    <button onclick="submitComplaint()">Submit</button>
+    <div id="recent-complaints"></div>
+  </div>
+
+  <div id="hygiene-complaints" style="display:none;">
+    <h2>🧺 Hygiene Complaints</h2>
+    <!-- Hygiene complaint content -->
+  </div>
+
+  <div id="lost-found" style="display:none;">
+    <h2>📦 Lost & Found</h2>
+    <!-- Lost & Found content -->
+  </div>
+
+  <div id="voting" style="display:none;">
+    <h2>🗳️ Voting Zone</h2>
+    <!-- Voting content -->
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+    const db = getDatabase();
+    const auth = getAuth();
+
+    function showComplaintForm() {
+      document.getElementById("complaint-section").style.display = "block";
+      document.getElementById("hygiene-complaints").style.display = "none";
+      document.getElementById("lost-found").style.display = "none";
+      document.getElementById("voting").style.display = "none";
+    }
+
+    function showHygieneComplaints() {
+      document.getElementById("hygiene-complaints").style.display = "block";
+      document.getElementById("complaint-section").style.display = "none";
+      document.getElementById("lost-found").style.display = "none";
+      document.getElementById("voting").style.display = "none";
+    }
+
+    function showLostAndFound() {
+      document.getElementById("lost-found").style.display = "block";
+      document.getElementById("complaint-section").style.display = "none";
+      document.getElementById("hygiene-complaints").style.display = "none";
+      document.getElementById("voting").style.display = "none";
+    }
+
+    function showVoting() {
+      document.getElementById("voting").style.display = "block";
+      document.getElementById("complaint-section").style.display = "none";
+      document.getElementById("hygiene-complaints").style.display = "none";
+      document.getElementById("lost-found").style.display = "none";
+    }
+
+    async function uploadToCloudinary(file) {
+      const url = "https://api.cloudinary.com/v1_1/dw9x8q0ld/image/upload";
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "ml_default"); // Replace if you use custom preset
+
+      const response = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      return data.secure_url;
+    }
+
+    window.submitComplaint = async () => {
+      const complaintText = document.getElementById("complaint").value;
+      const file = document.getElementById("imageInput").files[0];
+
+      if (!complaintText && !file) {
+        return alert("Please enter a complaint or choose an image.");
+      }
+
+      let imageUrl = null;
+      if (file) {
+        imageUrl = await uploadToCloudinary(file);
+      }
+
+      const complaintsRef = ref(db, "complaints");
+      push(complaintsRef, {
+        text: complaintText || "",
+        image: imageUrl || "",
+        timestamp: Date.now()
+      });
+
+      document.getElementById("complaint").value = "";
+      document.getElementById("imageInput").value = "";
+    };
+
+    function listenForComplaints() {
+      const complaintsRef = ref(db, "complaints");
+      const list = document.getElementById("recent-complaints");
+
+      onValue(complaintsRef, (snapshot) => {
+        list.innerHTML = "";
+        snapshot.forEach((childSnapshot) => {
+          const data = childSnapshot.val();
+          const li = document.createElement("div");
+          li.innerHTML = `<strong>Complaint:</strong> ${data.text || "(No text)"}<br>`;
+          if (data.image) {
+            const img = document.createElement("img");
+            img.src = data.image;
+            li.appendChild(img);
+          }
+          list.appendChild(li);
+        });
+      });
+    }
+
+    listenForComplaints();
+  </script>
+</body>
+</html>
